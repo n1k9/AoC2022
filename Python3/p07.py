@@ -2,8 +2,6 @@
 from dataclasses import dataclass
 from pprint import pprint
 
-from Cython.Compiler.Naming import lambda_func_prefix
-
 from utils import read_file
 
 
