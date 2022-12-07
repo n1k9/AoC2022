@@ -1,6 +1,6 @@
 # --- Day 1: Calorie Counting ---
 
-from utils import read_file, aggregate
+from utils import read_file
 
 
 def elf_calories(liens: str) -> list:
