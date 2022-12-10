@@ -8,12 +8,40 @@
 (0, 1)
 >>> follow((1, 2), (0, 1))
 (0, 1)
+>>> follow((2, 2), (2, 4))
+(2, 3)
 """
 from utils import read_file, distance
 
 R = 0
 C = 1
 
+
+def follow(n1: tuple, n2: tuple) -> tuple:
+    """
+    """
+    r, c = n2
+    if n1[C] == n2[C] and n1[R] - n2[R] > 1:    # up
+        r = n2[R] + 1
+    elif n1[C] == n2[C] and n2[R] - n1[R] > 1:  # down
+        r = n2[R] - 1
+    elif n1[R] == n2[R] and n1[C] - n2[C] > 1:  # right
+        c = n2[C] + 1
+    elif n1[R] == n2[R] and n2[C] - n1[C] > 1:  # left
+        c = n2[C] - 1
+    elif abs(n1[C] - n2[C]) == 1 and n1[R] - n2[R] > 1:  # up right
+        c = n1[C]
+        r = n2[R] + 1
+    elif abs(n1[C] - n2[C]) == 1 and n2[R] - n1[R] > 1:  # left down
+        c = n1[C]
+        r = n2[R] - 1
+    elif abs(n1[R] - n2[R]) == 1 and n1[C] - n2[C] > 1:  # right up
+        r = n1[R]
+        c = n2[C] + 1
+    elif abs(n1[R] - n2[R]) == 1 and n2[C] - n1[C] > 1:  # left down
+        r = n1[R]
+        c = n2[C] - 1
+    return r, c
 
 
 class Rope:
@@ -34,29 +62,25 @@ class Rope:
 
     def move_r(self):
         self.h = (self.h[R], self.h[C] + 1)
-        if abs(self.h[C] - self.t[C]) > 1:
-            self.t = (self.h[R], self.t[C] + 1)
+        self.t = follow(self.h, self.t)
         self._hold_move()
         return self.h
 
     def move_l(self):
         self.h = (self.h[R], self.h[C] - 1)
-        if abs(self.h[C] - self.t[C]) > 1:
-            self.t = (self.h[R], self.t[C] - 1)
+        self.t = follow(self.h, self.t)
         self._hold_move()
         return self.h
 
     def move_u(self):
         self.h = (self.h[R] + 1, self.h[C])
-        if abs(self.h[R] - self.t[R]) > 1:
-            self.t = (self.t[R] + 1, self.h[C])
+        self.t = follow(self.h, self.t)
         self._hold_move()
         return self.h
 
     def move_d(self):
         self.h = (self.h[R] - 1, self.h[C])
-        if abs(self.h[R] - self.t[R]) > 1:
-            self.t = (self.t[R] - 1, self.h[C])
+        self.t = follow(self.h, self.t)
         self._hold_move()
         return self.h
 
