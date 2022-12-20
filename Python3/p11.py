@@ -5,6 +5,21 @@ from utils import read_file
 monkeys = None
 
 
+def factors(n):
+    """
+    >>> list(factors(120))
+    [2, 2, 2, 3, 5]
+    >>> list(factors(89*5))
+    [5, 89]
+    """
+    while n > 1:
+        for i in range(2, n + 1):
+            if n % i == 0:
+                n //= i
+                yield i
+                break
+
+
 def parse_op(operation):
     def prod(a, b): return a * b
     def sum2(a, b): return a + b
@@ -126,16 +141,20 @@ def part_2(lines):
         for m in monkeys:
             m.turn(1)
         if t == 1 or t == 20 or t % 1000 == 0:
-            print(f"== After round {t}")
+            print(f"== After round {t} ==")
             print_inspected_items()
             print()
+            print_monkey_items()
+            print()
+        elif t % 100 == 0:
+            print(".", end='')
     ii = [m.inspected_items for m in monkeys]
     ii.sort(reverse=True)
     return ii[0] * ii[1]
 
 
 if __name__ == "__main__":
-    lines = read_file('../datas/d11-test.txt').split('\n')
+    lines = read_file('../datas/d11.txt').split('\n')
 
     print('\n Day 11')
     print(f"1: monkey business {part_1(lines)}")
