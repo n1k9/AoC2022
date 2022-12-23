@@ -4,7 +4,6 @@ import math
 from utils import read_file
 
 monkeys = None
-divisors = []
 
 def parse_op(operation):
     def prod(a, b): return a * b
