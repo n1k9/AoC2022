@@ -1,24 +1,10 @@
 # --- Day 11: Monkey in the Middle ---
 
+import math
 from utils import read_file
 
 monkeys = None
-
-
-def factors(n):
-    """
-    >>> list(factors(120))
-    [2, 2, 2, 3, 5]
-    >>> list(factors(89*5))
-    [5, 89]
-    """
-    while n > 1:
-        for i in range(2, n + 1):
-            if n % i == 0:
-                n //= i
-                yield i
-                break
-
+divisors = []
 
 def parse_op(operation):
     def prod(a, b): return a * b
@@ -70,11 +56,12 @@ class Monkey:
         self.if_false = if_false
         self.inspected_items = 0
 
-    def turn(self, worry_level_divisor=3):
+    def turn(self, worry_level_divisor=3, lcm=None):
         # print(f"Monkey {self.name}:")
         while self.items:
             self.inspected_items += 1
             worry_level = self.items.pop(0)
+            if lcm: worry_level %= lcm
             worry_level = self.op(worry_level)
             worry_level = worry_level // worry_level_divisor
             # print(f"  Item with worry level {worry_level} ", end='')
@@ -123,9 +110,10 @@ def part_1(lines):
     global monkeys
     monkeys = []
     parse_monkeys(lines)
+    lcm = math.lcm(*list(map(lambda m: m.test, monkeys)))
     for t in range(20):
         for m in monkeys:
-            m.turn()
+            m.turn(3, lcm)
     print_monkey_items()
     print_inspected_items()
     ii = [m.inspected_items for m in monkeys]
@@ -137,17 +125,16 @@ def part_2(lines):
     global monkeys
     monkeys = []
     parse_monkeys(lines)
-    for t in range(10000):
+    lcm = math.lcm(*list(map(lambda m: m.test, monkeys)))
+    for t in range(1, 10001):
         for m in monkeys:
-            m.turn(1)
+            m.turn(1, lcm)
         if t == 1 or t == 20 or t % 1000 == 0:
             print(f"== After round {t} ==")
             print_inspected_items()
             print()
-            print_monkey_items()
-            print()
-        elif t % 100 == 0:
-            print(".", end='')
+            # print_monkey_items()
+            # print()
     ii = [m.inspected_items for m in monkeys]
     ii.sort(reverse=True)
     return ii[0] * ii[1]
