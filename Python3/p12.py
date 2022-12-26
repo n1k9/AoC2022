@@ -60,6 +60,12 @@ class HeightMap:
         else:
             return INFINITE
 
+    def get(self, pos: Position) -> str:
+        if 0 <= pos.row < self.row_len and 0 <= pos.col < self.col_len:
+            return self.hmap[pos.row][pos.col]
+        else:
+            return ''
+
     def set_path(self, pos: Position, val):
         self.hmap[pos.row][pos.col] = val
         return val
@@ -125,17 +131,17 @@ def a_star(graph, start, goal, h=heuristic):
     came_from[start] = None
     cost_so_far = dict()
     cost_so_far[start] = 0
+    closedset = set()
 
-    while frontier.not_empty:
+    while not frontier.empty():
         current = frontier.get()[1]
-        # if current == Position(row=19, col=67):
-        #     print(reconstruct_path(came_from, current, start))
-        #     return reconstruct_path(came_from, current, start)
-
+        closedset.add(current)
         if current == goal:
             return reconstruct_path(came_from, current, start)
 
         for next in graph.neighbors(current):
+            if next in closedset:
+                continue
             new_cost = cost_so_far[current] + graph.cost(current, next)
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
@@ -143,16 +149,33 @@ def a_star(graph, start, goal, h=heuristic):
                 frontier.put((priority, next))
                 came_from[next] = current
 
+    return None
+
+
+def part_1(height_map: HeightMap) -> int:
+    start_pos = hmap.find_pos('S')
+    end_pos = hmap.find_pos('E')
+    path = a_star(hmap, start_pos, end_pos)
+    return len(path) if path else INFINITE
+
+
+def part_2(height_map: HeightMap) -> int:
+    end_pos = hmap.find_pos('E')
+    starts_len = []
+    for r in range(height_map.row_len):
+        for c in range(height_map.col_len):
+            p = Position(r, c)
+            if height_map.get(Position(r, c)) in ['a', 'S']:
+                path = a_star(height_map, p, end_pos)
+                if path:
+                    starts_len.append(len(path))
+    return min(starts_len)
+
 
 if __name__ == "__main__":
     hmap = HeightMap(to_grid(read_file('../datas/d12.txt').split('\n')))
-    print(height_values)
-    # pprint(hmap.hmap)
-    start_pos = hmap.find_pos('S')
 
-    end_pos = hmap.find_pos('E')
+    pprint(a_star(hmap, Position(40, 47), Position(20,40)))
 
-    path = a_star(hmap, start_pos, end_pos)
-    pprint(hmap.print_map(path))
-
-    print(f"1: {len(path)}")
+    print(f"1: {part_1(hmap)}")
+    print(f"2: {part_2(hmap)}")
