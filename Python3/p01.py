@@ -3,7 +3,7 @@
 from utils import read_file
 
 
-def elf_calories(liens: str) -> list:
+def elf_calories(lines: str) -> list:
     elf_carried = map(lambda x: x.split('\n'), lines.split('\n\n'))
     return [sum(map(int, x)) for x in elf_carried if x != ['']]
 

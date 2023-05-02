@@ -1,5 +1,4 @@
 # --- Day 13: Distress Signal ---
-import functools
 
 from utils import read_file, to_grid
 
